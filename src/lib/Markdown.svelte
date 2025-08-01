@@ -4,6 +4,6 @@
 	let { content }: { content: string } = $props();
 </script>
 
-<div class="prose">
+<div class="prose prose-neutral">
 	{@html marked.parse(content)}
 </div>
