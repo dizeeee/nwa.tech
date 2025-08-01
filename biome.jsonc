@@ -1,0 +1,8 @@
+{
+  "files": {
+    "includes": [
+      "!**/*.*", // TODO: switch to Biome when Svelte support is stable
+      "!**/*.svelte"
+    ]
+  }
+}
