@@ -5,6 +5,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { DATABASE_URL } from '$env/static/private';
 import { admin, organization } from 'better-auth/plugins';
 import * as schema from './db/schema';
+import { admin as adminRole, creator, user } from './roles';
 // import { sveltekitCookies } from 'better-auth/svelte-kit';
 // import { getRequestEvent } from '$app/server';
 
@@ -23,10 +24,16 @@ export function getAuth(db?: D1Database) {
 			enabled: true
 		},
 		plugins: [
-			admin(),
+			admin({
+				roles: {
+					user,
+					creator,
+					admin: adminRole
+				}
+			}),
 			organization({
 				allowUserToCreateOrganization: async (user) => {
-					return user?.role === 'admin';
+					return (user as unknown as { role: string }).role === 'admin';
 				}
 			})
 			// TODO: see if this type error is a version issue

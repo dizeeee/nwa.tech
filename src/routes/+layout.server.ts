@@ -5,7 +5,14 @@ export const load: LayoutServerLoad = async ({ locals, request }) => {
 		headers: request.headers
 	});
 
+	const orgs = session
+		? await locals.auth.api.listOrganizations({
+				headers: request.headers
+			})
+		: null;
+
 	return {
-		session
+		session,
+		orgs
 	};
 };

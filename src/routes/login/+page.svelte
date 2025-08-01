@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { authClient } from '$lib/authClient';
 
 	let email = $state('');
@@ -16,6 +16,7 @@
 			error = res.error.message ?? '';
 		}
 		if (res.data) {
+			await invalidateAll();
 			goto('/');
 		}
 	}
