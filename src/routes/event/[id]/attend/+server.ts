@@ -79,7 +79,7 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params, pl
 			attachments: [
 				{
 					filename: `${eventData.title.replace(/[^a-zA-Z0-9]/g, '_')}.ics`,
-					content: Buffer.from(icsContent).toString('base64'),
+					content: btoa(icsContent),
 					contentType: 'text/calendar'
 				}
 			]
