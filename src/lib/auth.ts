@@ -2,19 +2,21 @@ import { betterAuth } from 'better-auth';
 import { drizzle as drizzleLibsql } from 'drizzle-orm/libsql';
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { DATABASE_URL } from '$env/static/private';
 import { admin, organization } from 'better-auth/plugins';
 import * as schema from './db/schema';
 import { admin as adminRole, creator, user } from './roles';
 import { getResend } from './resend';
+import dotenv from 'dotenv';
 // import { sveltekitCookies } from 'better-auth/svelte-kit';
 // import { getRequestEvent } from '$app/server';
+
+dotenv.config();
 
 // This is used *exclusively* for schema generation, it should never be used at runtime
 export const auth = getAuth();
 
 export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string, secret?: string) {
-	const drizzle = db ? drizzleD1(db) : drizzleLibsql(`file:${DATABASE_URL}`);
+	const drizzle = db ? drizzleD1(db) : drizzleLibsql(`file:${process.env.DATABASE_URL}`);
 	const resend = resendToken ? getResend(resendToken) : null;
 
 	return betterAuth({
