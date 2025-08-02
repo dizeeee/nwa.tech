@@ -6,15 +6,18 @@ import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '$lib/db/schema';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	if (!event.platform?.env.DB) throw new Error('DB is not set');
+	if (!event.platform) throw new Error('Missing platform');
 
-	const auth = getAuth(event.platform.env.DB, event.url.origin);
+	const auth = getAuth(
+		event.platform.env.DB,
+		event.url.origin,
+		event.platform.env.RESEND_API_KEY,
+		event.platform.env.BETTER_AUTH_SECRET
+	);
 	const db = drizzle(event.platform.env.DB, { schema });
 	const session = await auth.api.getSession({
 		headers: event.request.headers
 	});
-
-	console.log(event.platform);
 
 	event.locals = { auth, db, session };
 

@@ -1,12 +1,13 @@
 import { and, eq } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 import { attendee, event } from '$lib/db/schema';
-import { resend } from '$lib/resend';
+import { getResend } from '$lib/resend';
 import { generateIcsCalendar, type IcsCalendar, type IcsEvent } from 'ts-ics';
 
-export const POST: RequestHandler = async ({ locals: { db, session }, params }) => {
+export const POST: RequestHandler = async ({ locals: { db, session }, params, platform }) => {
 	const { id } = params;
 
+	if (!platform) throw new Error('Missing platform');
 	if (isNaN(parseInt(id))) return new Response('Invalid event ID', { status: 400 });
 
 	const eventData = await db
@@ -55,7 +56,7 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params }) 
 			url: `https://nwa.tech/event/${id}`,
 			organizer: {
 				name: 'NWA Tech',
-				email: 'noreply@resend.dev'
+				email: 'noreply@nwa.tech'
 			}
 		};
 
@@ -66,9 +67,10 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params }) 
 		};
 
 		const icsContent = generateIcsCalendar(icsCalendarData);
+		const resend = getResend(platform.env.RESEND_API_KEY);
 
 		await resend.emails.send({
-			from: 'nwa.tech <noreply@resend.dev>',
+			from: 'nwa.tech <noreply@nwa.tech>',
 			to: [session.user.email],
 			subject: `You're attending ${eventData.title}!`,
 			html: `<p>You're all set! You're attending ${eventData.title}.</p>
