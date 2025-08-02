@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth';
-import { drizzle as drizzleLibsql } from 'drizzle-orm/better-sqlite3';
+import { drizzle as drizzleLibsql } from 'drizzle-orm/libsql';
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, organization } from 'better-auth/plugins';
