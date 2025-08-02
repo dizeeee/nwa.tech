@@ -13,7 +13,7 @@ import { getResend } from './resend';
 export const auth = getAuth();
 
 export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string, secret?: string) {
-	const drizzle = db ? drizzleD1(db) : drizzleLibsql('libsql://:memory:');
+	const drizzle = db ? drizzleD1(db) : drizzleLibsql('libsql://db.sqlite');
 	const resend = resendToken ? getResend(resendToken) : null;
 
 	return betterAuth({
