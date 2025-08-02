@@ -53,6 +53,13 @@
 	>
 		Sign up
 	</button>
+	<span class="space-y-2 text-center text-sm">
+		By signing up, you agree to our <a
+			href="/tos"
+			class="text-black underline hover:text-neutral-700">Terms of Service</a
+		>
+		and <a href="/privacy" class="text-black underline hover:text-neutral-700">Privacy Policy</a>.
+	</span>
 	<span class="text-center text-sm">
 		Already have an account?
 		<a href="/login" class="text-black underline hover:text-neutral-700">Login</a>
