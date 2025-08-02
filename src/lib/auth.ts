@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth';
-import { drizzle as drizzleLibsql } from 'drizzle-orm/libsql';
+import { drizzle as drizzleLibsql } from 'drizzle-orm/better-sqlite3';
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, organization } from 'better-auth/plugins';
@@ -13,7 +13,7 @@ import { getResend } from './resend';
 export const auth = getAuth();
 
 export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string, secret?: string) {
-	const drizzle = db ? drizzleD1(db) : drizzleLibsql(':memory:');
+	const drizzle = db ? drizzleD1(db) : drizzleLibsql('libsql://:memory:');
 	const resend = resendToken ? getResend(resendToken) : null;
 
 	return betterAuth({
