@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import * as authSchema from './authSchema';
 import { relations } from 'drizzle-orm';
 
@@ -23,6 +23,31 @@ export const eventRelations = relations(event, ({ one }) => ({
 	organization: one(authSchema.organization, {
 		fields: [event.organizationId],
 		references: [authSchema.organization.id]
+	})
+}));
+
+export const attendee = sqliteTable(
+	'attendee',
+	{
+		userId: text('user_id')
+			.notNull()
+			.references(() => authSchema.user.id),
+		eventId: integer('event_id')
+			.notNull()
+			.references(() => event.id),
+		cancelled: integer('cancelled', { mode: 'boolean' }).notNull().default(false)
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.eventId] })]
+);
+
+export const attendeeRelations = relations(attendee, ({ one }) => ({
+	user: one(authSchema.user, {
+		fields: [attendee.userId],
+		references: [authSchema.user.id]
+	}),
+	event: one(event, {
+		fields: [attendee.eventId],
+		references: [event.id]
 	})
 }));
 

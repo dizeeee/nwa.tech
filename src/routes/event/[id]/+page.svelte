@@ -8,7 +8,15 @@
 
 <div class="flex items-center justify-between">
 	<h1 class="text-3xl font-bold">{data.event.title}</h1>
-	<button class="cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+	<button
+		class="cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+		onclick={async () => {
+			const response = await fetch(`/event/${data.event.id}/attend`, {
+				method: 'POST'
+			});
+			console.log(await response.text());
+		}}
+	>
 		Attend
 	</button>
 </div>

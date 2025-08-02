@@ -1,0 +1,90 @@
+import { and, eq } from 'drizzle-orm';
+import type { RequestHandler } from './$types';
+import { attendee, event } from '$lib/db/schema';
+import { resend } from '$lib/resend';
+import { generateIcsCalendar, type IcsCalendar, type IcsEvent } from 'ts-ics';
+
+export const POST: RequestHandler = async ({ locals: { db, session }, params }) => {
+	const { id } = params;
+
+	if (isNaN(parseInt(id))) return new Response('Invalid event ID', { status: 400 });
+
+	const eventData = await db
+		.select()
+		.from(event)
+		.where(eq(event.id, parseInt(id)))
+		.get();
+
+	if (!eventData) return new Response('Event not found', { status: 404 });
+	if (!session) return new Response('Unauthorized', { status: 401 });
+
+	const attendance = await db
+		.select()
+		.from(attendee)
+		.where(and(eq(attendee.userId, session.user.id), eq(attendee.eventId, parseInt(id))))
+		.get();
+
+	if (attendance && !attendance.cancelled) {
+		await db
+			.update(attendee)
+			.set({ cancelled: true })
+			.where(and(eq(attendee.userId, session.user.id), eq(attendee.eventId, parseInt(id))))
+			.execute();
+	} else {
+		await db
+			.insert(attendee)
+			.values({ userId: session.user.id, eventId: parseInt(id) })
+			.onConflictDoUpdate({
+				target: [attendee.userId, attendee.eventId],
+				set: { cancelled: false }
+			});
+
+		const startDate = eventData.startTime ? new Date(eventData.startTime) : new Date();
+		const endDate = eventData.endTime
+			? new Date(eventData.endTime)
+			: new Date(Date.now() + 60 * 60); // Default to 1 hour later
+
+		const icsEventData: IcsEvent = {
+			uid: `event-${id}-${Date.now()}@nwa.tech`,
+			stamp: { date: new Date() },
+			summary: eventData.title,
+			description: eventData.description,
+			start: { date: startDate },
+			end: { date: endDate },
+			location: eventData.location || undefined,
+			url: `https://nwa.tech/event/${id}`,
+			organizer: {
+				name: 'NWA Tech',
+				email: 'noreply@resend.dev'
+			}
+		};
+
+		const icsCalendarData: IcsCalendar = {
+			events: [icsEventData],
+			prodId: 'NWA Tech Events',
+			version: '2.0'
+		};
+
+		const icsContent = generateIcsCalendar(icsCalendarData);
+
+		await resend.emails.send({
+			from: 'nwa.tech <noreply@resend.dev>',
+			to: [session.user.email],
+			subject: `You're attending ${eventData.title}!`,
+			html: `<p>You're all set! You're attending ${eventData.title}.</p>
+            <p>You can view the details <a href="https://nwa.tech/event/${id}">here</a>.</p>
+            <p>A calendar invite has been attached to help you keep track of the event.</p>`,
+			attachments: [
+				{
+					filename: `${eventData.title.replace(/[^a-zA-Z0-9]/g, '_')}.ics`,
+					content: Buffer.from(icsContent).toString('base64'),
+					contentType: 'text/calendar'
+				}
+			]
+		});
+
+		console.log(icsContent);
+	}
+
+	return new Response(attendance && !attendance.cancelled ? 'Unattend' : 'Attend', { status: 200 });
+};
