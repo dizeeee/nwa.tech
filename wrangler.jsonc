@@ -19,7 +19,7 @@
 			"binding": "DB",
 			"database_id": "3681fac5-d494-460a-8ba3-0a146fbbab7c",
 			"database_name": "nwa-tech-db",
-			"migrations_dir": "./drizzle/migrations"
+			"migrations_dir": "./drizzle"
 		}
 	]
 	/**
