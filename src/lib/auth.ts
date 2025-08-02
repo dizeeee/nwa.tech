@@ -13,10 +13,11 @@ import { resend } from './resend';
 // This is used *exclusively* for schema generation, it should never be used at runtime
 export const auth = getAuth();
 
-export function getAuth(db?: D1Database) {
+export function getAuth(db?: D1Database, baseUrl?: string) {
 	const drizzle = db ? drizzleD1(db) : drizzleLibsql(`file:${DATABASE_URL}`);
 
 	return betterAuth({
+		baseUrl,
 		database: drizzleAdapter(drizzle, {
 			provider: 'sqlite',
 			schema: { ...schema }
