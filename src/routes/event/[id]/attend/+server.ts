@@ -9,6 +9,8 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params, pl
 
 	if (!platform) throw new Error('Missing platform');
 	if (isNaN(parseInt(id))) return new Response('Invalid event ID', { status: 400 });
+	if (!session) return new Response('Unauthorized', { status: 401 });
+	if (!session.user.emailVerified) return new Response('Email not verified', { status: 403 });
 
 	const eventData = await db
 		.select()
@@ -17,7 +19,6 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params, pl
 		.get();
 
 	if (!eventData) return new Response('Event not found', { status: 404 });
-	if (!session) return new Response('Unauthorized', { status: 401 });
 
 	const attendeeData = await db
 		.select()

@@ -27,5 +27,7 @@ export const load: PageServerLoad = async ({ params, locals: { db, session } }) 
 		isAttending = !!(attendeeData && !attendeeData.cancelled);
 	}
 
-	return { event: eventData, isAttending };
+	const emailVerified = session?.user.emailVerified ?? false;
+
+	return { event: eventData, isAttending, emailVerified };
 };
