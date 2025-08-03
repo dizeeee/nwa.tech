@@ -16,13 +16,16 @@ export const load: PageServerLoad = async ({ params, locals: { db, session } }) 
 
 	if (!eventData) throw redirect(302, '/');
 
-	const isAttending =
-		session &&
-		!!(await db
+	let isAttending = false;
+	if (session) {
+		const attendeeData = await db
 			.select()
 			.from(attendee)
 			.where(and(eq(attendee.userId, session.user.id), eq(attendee.eventId, parseInt(id))))
-			.get());
+			.get();
+
+		isAttending = !!(attendeeData && !attendeeData.cancelled);
+	}
 
 	return { event: eventData, isAttending };
 };

@@ -4,20 +4,36 @@
 	import Markdown from '$lib/Markdown.svelte';
 
 	const { data }: PageProps = $props();
+	let isAttending = $state(data.isAttending);
+	let attendButtonText = $derived(isAttending ? 'Attending' : 'Attend');
 </script>
 
 <div class="flex items-center justify-between">
 	<h1 class="text-3xl font-bold">{data.event.title}</h1>
 	<button
-		class="cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+		class={`cursor-pointer rounded-md px-4 py-2 text-white transition-colors
+			${
+				// janky but it works!
+				attendButtonText === 'Attending'
+					? 'bg-green-500 hover:bg-green-600'
+					: attendButtonText === 'Cancel'
+						? 'bg-red-500 hover:bg-red-600'
+						: 'bg-blue-500 hover:bg-blue-600'
+			}`}
+		onmouseenter={() =>
+			isAttending ? (attendButtonText = 'Cancel') : (attendButtonText = 'Attend')}
+		onmouseleave={() =>
+			isAttending ? (attendButtonText = 'Attending') : (attendButtonText = 'Attend')}
 		onclick={async () => {
 			const response = await fetch(`/event/${data.event.id}/attend`, {
 				method: 'POST'
 			});
-			console.log(await response.text());
+			const text = await response.text();
+			console.log(text);
+			isAttending = !isAttending;
 		}}
 	>
-		Attend
+		{attendButtonText}
 	</button>
 </div>
 

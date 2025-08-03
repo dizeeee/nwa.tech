@@ -19,26 +19,29 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params, pl
 	if (!eventData) return new Response('Event not found', { status: 404 });
 	if (!session) return new Response('Unauthorized', { status: 401 });
 
-	const attendance = await db
+	const attendeeData = await db
 		.select()
 		.from(attendee)
 		.where(and(eq(attendee.userId, session.user.id), eq(attendee.eventId, parseInt(id))))
 		.get();
 
-	if (attendance && !attendance.cancelled) {
+	if (attendeeData && !attendeeData.cancelled) {
+		// cancel attendance
 		await db
 			.update(attendee)
 			.set({ cancelled: true })
 			.where(and(eq(attendee.userId, session.user.id), eq(attendee.eventId, parseInt(id))))
 			.execute();
-	} else {
+	} else if (attendeeData && attendeeData.cancelled) {
+		// uncancel, prevent double invite emails
 		await db
-			.insert(attendee)
-			.values({ userId: session.user.id, eventId: parseInt(id) })
-			.onConflictDoUpdate({
-				target: [attendee.userId, attendee.eventId],
-				set: { cancelled: false }
-			});
+			.update(attendee)
+			.set({ cancelled: false })
+			.where(and(eq(attendee.userId, session.user.id), eq(attendee.eventId, parseInt(id))))
+			.execute();
+	} else {
+		// attend, only do on initial insert to guarantee a single invite email
+		await db.insert(attendee).values({ userId: session.user.id, eventId: parseInt(id) });
 
 		const startDate = eventData.startTime ? new Date(eventData.startTime) : new Date();
 		const endDate = eventData.endTime
@@ -84,9 +87,9 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params, pl
 				}
 			]
 		});
-
-		console.log(icsContent);
 	}
 
-	return new Response(attendance && !attendance.cancelled ? 'Unattend' : 'Attend', { status: 200 });
+	return new Response(attendeeData && !attendeeData.cancelled ? 'Unattend' : 'Attend', {
+		status: 200
+	});
 };
