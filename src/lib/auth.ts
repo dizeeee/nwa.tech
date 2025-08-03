@@ -58,13 +58,7 @@ export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string,
 		],
 		rateLimit: {
 			enabled: true,
-			storage: 'database',
-			customRules: {
-				'/api/auth/send-verification-email': {
-					max: 3,
-					window: 60 * 60 // 1 hour
-				}
-			}
+			storage: 'database'
 		},
 		secret: secret ?? '' // TODO: Find a way to make this less hacky
 	});
