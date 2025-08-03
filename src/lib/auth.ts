@@ -56,6 +56,16 @@ export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string,
 			// TODO: see if this type error is a version issue
 			// sveltekitCookies(getRequestEvent)
 		],
+		rateLimit: {
+			enabled: true,
+			storage: 'database',
+			customRules: {
+				'/api/auth/send-verification-email': {
+					max: 3,
+					window: 60 * 60 // 1 hour
+				}
+			}
+		},
 		secret: secret ?? '' // TODO: Find a way to make this less hacky
 	});
 }
