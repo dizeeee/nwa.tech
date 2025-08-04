@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Markdown from '$lib/Markdown.svelte';
+	import Markdown from '$lib/components/Markdown.svelte';
 
 	const privacy = `
 # Privacy Policy - nwa.tech
