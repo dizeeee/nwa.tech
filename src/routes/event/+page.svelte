@@ -11,8 +11,8 @@
 	/>
 	<textarea
 		name="description"
-		placeholder="Description"
-		class="h-20 rounded-md border border-gray-300 p-2"
+		placeholder="Description (supports markdown)"
+		class="h-40 rounded-md border border-gray-300 p-2"
 	></textarea>
 	<div class="flex items-center gap-2">
 		<div class="flex grow flex-col">
