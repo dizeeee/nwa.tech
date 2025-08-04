@@ -6,7 +6,9 @@
 
 {#each data.events as event}
 	<a href="/event/{event.id}">
-		<div class="flex flex-col gap-2 rounded-md border border-neutral-300 px-4 py-2">
+		<div
+			class="flex flex-col gap-2 rounded-md border border-neutral-300 px-4 py-2 transition-colors hover:bg-neutral-100"
+		>
 			<h2 class="text-2xl font-bold">{event.title}</h2>
 			<div class="flex items-center gap-2">
 				<Clock size={18} />

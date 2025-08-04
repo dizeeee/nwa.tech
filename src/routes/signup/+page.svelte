@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
+	import { page } from '$app/state';
 	import { authClient } from '$lib/authClient';
+	import type { PageProps } from './$types';
+
+	const redirectUrl = page.url.searchParams.get('redirect');
 
 	let name = $state('');
 	let email = $state('');
@@ -11,7 +15,7 @@
 		const res = await authClient.signUp.email({
 			email,
 			password,
-			name
+			name,
 		});
 
 		if (res.error) {
@@ -19,7 +23,7 @@
 		}
 		if (res.data) {
 			await invalidateAll();
-			goto('/');
+			goto(redirectUrl ?? '/', { replaceState: true });
 		}
 	}
 </script>

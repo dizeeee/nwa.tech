@@ -37,7 +37,7 @@
 		{/if}
 	{:else}
 		<button
-			class={`cursor-pointer rounded-md px-4 py-2 text-white transition-colors
+			class={`w-32 cursor-pointer rounded-md px-4 py-2 text-white transition-colors
 			${
 				// janky but it works!
 				attendButtonText === 'Attending'
@@ -52,7 +52,8 @@
 				isAttending ? (attendButtonText = 'Attending') : (attendButtonText = 'Attend')}
 			onclick={async () => {
 				if (!data.session) {
-					goto('/signup');
+					goto(`/signup?redirect=${encodeURIComponent(`/event/${data.event.id}`)}`);
+					return;
 				}
 
 				const response = await fetch(`/event/${data.event.id}/attend`, {
