@@ -63,15 +63,15 @@
 							class="absolute right-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white shadow-lg"
 						>
 							<div class="flex flex-col p-1">
-								<a
-									href="/profile"
-									class="flex items-center gap-2 rounded-md p-2 hover:bg-neutral-100"
-									onclick={closePopover}
-								>
-									<User class="size-6 text-neutral-700" />
-									<span>Profile</span>
-								</a>
 								{#if data.session.user.role?.split(',').includes('creator')}
+									<a
+										href="/profile"
+										class="flex items-center gap-2 rounded-md p-2 hover:bg-neutral-100"
+										onclick={closePopover}
+									>
+										<User class="size-6 text-neutral-700" />
+										<span>Profile</span>
+									</a>
 									<a
 										href="/event"
 										class="flex items-center gap-2 rounded-md p-2 hover:bg-neutral-100"
