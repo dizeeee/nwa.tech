@@ -50,7 +50,7 @@ export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string,
 			}),
 			organization({
 				allowUserToCreateOrganization: async (user) => {
-					return (user as unknown as { role: string }).role === 'admin';
+					return (user as unknown as { role: string }).role.split(',').includes('admin');
 				}
 			})
 			// TODO: see if this type error is a version issue
