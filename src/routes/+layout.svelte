@@ -24,7 +24,7 @@
 	}
 </script>
 
-<div class="mx-auto flex max-w-screen-lg flex-col gap-4 py-4">
+<div class="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-4">
 	<nav class="flex items-center justify-between gap-4">
 		<div class="flex items-baseline gap-4">
 			<a href="/" class="text-2xl font-bold">nwa.tech</a>
