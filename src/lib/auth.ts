@@ -10,7 +10,7 @@ import { getResend } from './resend';
 // import { getRequestEvent } from '$app/server';
 
 // This is used *exclusively* for schema generation, it should never be used at runtime
-export const auth = getAuth();
+export const auth = getAuth(); // TODO: Find a way to prevent this from running without context when deployed
 
 export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string, secret?: string) {
 	const drizzle = db ? drizzleD1(db) : drizzleLibsql('libsql://db.sqlite');
@@ -59,6 +59,11 @@ export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string,
 		rateLimit: {
 			enabled: true,
 			storage: 'database'
+		},
+		advanced: {
+			ipAddress: {
+				ipAddressHeaders: ['cf-connecting-ip'] // https://www.better-auth.com/docs/concepts/rate-limit#connecting-ip-address
+			}
 		},
 		secret: secret ?? '' // TODO: Find a way to make this less hacky
 	});
