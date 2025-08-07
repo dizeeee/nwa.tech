@@ -1,7 +1,8 @@
+import { json, type RequestHandler } from '@sveltejs/kit';
 import { event } from '$lib/db/schema';
-import { and, desc, eq, gte, isNull, or } from 'drizzle-orm';
+import { and, desc, gte, isNull, or } from 'drizzle-orm';
 
-export const load = async ({ locals, url }) => {
+export const GET: RequestHandler = async ({ locals, url }) => {
 	const limit = Number(url.searchParams.get('limit') ?? 10);
 	const offset = Number(url.searchParams.get('offset') ?? 0);
 
@@ -20,5 +21,5 @@ export const load = async ({ locals, url }) => {
 		.limit(limit)
 		.offset(offset);
 
-	return { events, nextOffset: offset + events.length, hasMore: events.length === limit };
+	return json({ events, nextOffset: offset + events.length, hasMore: events.length === limit });
 };

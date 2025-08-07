@@ -27,27 +27,24 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params, pl
 		.get();
 
 	if (attendeeData && !attendeeData.cancelled) {
-		// cancel attendance
 		await db
 			.update(attendee)
 			.set({ cancelled: true })
 			.where(and(eq(attendee.userId, session.user.id), eq(attendee.eventId, parseInt(id))))
 			.execute();
 	} else if (attendeeData && attendeeData.cancelled) {
-		// uncancel, prevent double invite emails
 		await db
 			.update(attendee)
 			.set({ cancelled: false })
 			.where(and(eq(attendee.userId, session.user.id), eq(attendee.eventId, parseInt(id))))
 			.execute();
 	} else {
-		// attend, only do on initial insert to guarantee a single invite email
 		await db.insert(attendee).values({ userId: session.user.id, eventId: parseInt(id) });
 
 		const startDate = eventData.startTime ? new Date(eventData.startTime) : new Date();
 		const endDate = eventData.endTime
 			? new Date(eventData.endTime)
-			: new Date(Date.now() + 60 * 60); // Default to 1 hour later
+			: new Date(Date.now() + 60 * 60);
 
 		const icsEventData: IcsEvent = {
 			uid: `event-${id}-${Date.now()}@nwa.tech`,
@@ -58,10 +55,7 @@ export const POST: RequestHandler = async ({ locals: { db, session }, params, pl
 			end: { date: endDate },
 			location: eventData.location || undefined,
 			url: `https://nwa.tech/event/${id}`,
-			organizer: {
-				name: 'NWA Tech',
-				email: 'noreply@nwa.tech'
-			}
+			organizer: { name: 'NWA Tech', email: 'noreply@nwa.tech' }
 		};
 
 		const icsCalendarData: IcsCalendar = {

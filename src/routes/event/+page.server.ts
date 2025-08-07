@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { event } from '$lib/db/schema';
+import type { PageServerLoad } from './$types';
 
 export const actions = {
 	createEvent: async ({ request, locals: { auth, db } }) => {
@@ -24,7 +25,8 @@ export const actions = {
 			startTime: new Date(eventData.startTime as string).getTime(),
 			endTime: new Date(eventData.endTime as string).getTime(),
 			location: eventData.location as string,
-			organizerId: session.user.id
+			organizerId: session.user.id,
+			organizationId: (eventData.organizationId as string) || null
 		});
 
 		console.log(res);
@@ -34,3 +36,9 @@ export const actions = {
 		};
 	}
 } satisfies Actions;
+
+export const load: PageServerLoad = async ({ locals: { auth }, request }) => {
+	const session = await auth.api.getSession({ headers: request.headers });
+	const orgs = session ? await auth.api.listOrganizations({ headers: request.headers }) : null;
+	return { orgs };
+};

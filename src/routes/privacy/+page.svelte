@@ -52,7 +52,7 @@ nwa.tech is operated by an individual in the United States in a personal capacit
 
 ## 7. Your Choices and Rights
 
-- Access, update, or delete your account information by contacting nwatech@jackmal.com.
+- Access, update, or delete your account information by contacting contact@nwa.tech.
 
 - Opt out of marketing emails (if any) via unsubscribe links; transactional emails are necessary for the Service.
 

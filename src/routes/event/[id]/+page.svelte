@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Clock, MapPin } from '@lucide/svelte';
+	import { Clock, MapPin, User } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 	import Markdown from '$lib/components/Markdown.svelte';
 	import { authClient } from '$lib/authClient';
@@ -12,7 +12,7 @@
 
 <div class="flex items-center justify-between">
 	<h1 class="text-3xl font-bold">{data.event.title}</h1>
-	<div class="flex flex-col gap-2">
+	<div class="flex flex-col items-end gap-2">
 		{#if data.session && !data.emailVerified}
 			{#if !isResendClicked}
 				<p class="text-sm text-neutral-700">Please verify your email to attend this event.</p>
@@ -34,7 +34,15 @@
 				</p>
 			{/if}
 		{:else}
-			<AttendButton eventId={data.event.id} bind:isAttending session={data.session} />
+			<div class="flex items-center gap-2">
+				<AttendButton eventId={data.event.id} bind:isAttending session={data.session} />
+				{#if data.session?.user.id === data.event.organizerId}
+					<a
+						class="flex h-10 cursor-pointer items-center justify-center rounded-md border border-neutral-300 px-4 text-sm text-neutral-800 transition-colors hover:bg-neutral-100"
+						href={`/event/${data.event.id}/edit`}>Edit</a
+					>
+				{/if}
+			</div>
 		{/if}
 	</div>
 </div>
@@ -68,6 +76,13 @@
 			{:else}
 				TBD
 			{/if}
+		</p>
+	</div>
+
+	<div class="flex items-center gap-2">
+		<User class="size-4 text-neutral-700" />
+		<p class="text-sm text-neutral-700">
+			{data.attendeeCount} attendee{data.attendeeCount === 1 ? '' : 's'}
 		</p>
 	</div>
 </div>

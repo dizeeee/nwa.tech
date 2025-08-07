@@ -33,8 +33,7 @@
 		isLoading = true;
 
 		try {
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			const response = await fetch(`/event/${eventId}/attend`, {
+			const response = await fetch(`/api/attend/${eventId}`, {
 				method: 'POST'
 			});
 

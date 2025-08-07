@@ -1,5 +1,5 @@
 import { attendee, event } from '$lib/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
@@ -29,5 +29,13 @@ export const load: PageServerLoad = async ({ params, locals: { db, session } }) 
 
 	const emailVerified = session?.user.emailVerified ?? false;
 
-	return { event: eventData, isAttending, emailVerified };
+	const attendeeAggregate = await db
+		.select({ count: count() })
+		.from(attendee)
+		.where(and(eq(attendee.eventId, parseInt(id)), eq(attendee.cancelled, false)))
+		.get();
+
+	const attendeeCount = attendeeAggregate?.count ?? 0;
+
+	return { event: eventData, isAttending, emailVerified, attendeeCount };
 };
