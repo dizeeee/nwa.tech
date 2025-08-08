@@ -15,9 +15,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.platform.env.BETTER_AUTH_SECRET
 	);
 	const db = drizzle(event.platform.env.DB, { schema });
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
+
+	// Avoid expensive session lookup on Better Auth internal routes
+	const isBetterAuthRoute = event.url.pathname.startsWith('/api/auth');
+	const session = isBetterAuthRoute
+		? null
+		: await auth.api.getSession({
+				headers: event.request.headers
+			});
 
 	event.locals = { auth, db, session };
 

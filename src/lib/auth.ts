@@ -9,14 +9,15 @@ import { getResend } from './resend';
 // import { sveltekitCookies } from 'better-auth/svelte-kit';
 // import { getRequestEvent } from '$app/server';
 
-// This is used *exclusively* for schema generation, it should never be used at runtime
-export const auth = getAuth(); // TODO: Find a way to prevent this from running without context when deployed
+let cachedAuthInstance: ReturnType<typeof betterAuth> | null = null;
 
 export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string, secret?: string) {
+	if (cachedAuthInstance) return cachedAuthInstance;
+
 	const drizzle = db ? drizzleD1(db) : drizzleLibsql('libsql://db.sqlite');
 	const resend = resendToken ? getResend(resendToken) : null;
 
-	return betterAuth({
+	cachedAuthInstance = betterAuth({
 		baseUrl,
 		database: drizzleAdapter(drizzle, {
 			provider: 'sqlite',
@@ -67,4 +68,6 @@ export function getAuth(db?: D1Database, baseUrl?: string, resendToken?: string,
 		},
 		secret: secret ?? '' // TODO: Find a way to make this less hacky
 	});
+
+	return cachedAuthInstance;
 }
