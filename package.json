@@ -49,6 +49,7 @@
 		"wrangler": "^4.27.0"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.863.0",
 		"@libsql/client": "^0.14.0",
 		"@lucide/svelte": "^0.536.0",
 		"@tailwindcss/typography": "^0.5.16",

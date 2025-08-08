@@ -31,21 +31,34 @@
 {#each events as event}
 	<a href="/event/{event.id}">
 		<div
-			class="flex flex-col gap-2 rounded-md border border-neutral-300 px-4 py-2 transition-colors hover:bg-neutral-100"
+			class="flex flex-col overflow-hidden rounded-md border border-neutral-300 transition-colors hover:bg-neutral-50"
 		>
-			<h2 class="text-2xl font-bold">{event.title}</h2>
-			<div class="flex items-center gap-2">
-				<Clock size={18} />
-				{#if event.startTime}
-					<p>{new Date(event.startTime).toLocaleString()}</p>
-				{:else}
-					<p>TBD</p>
-				{/if}
-			</div>
-
-			<div class="flex items-center gap-2">
-				<MapPin size={18} />
-				<p>{event.location}</p>
+			{#if event.imageUrl}
+				<div class="aspect-[16/9] w-full bg-neutral-100">
+					<img
+						src={event.imageUrl}
+						alt={event.title}
+						class="h-full w-full object-cover"
+						loading="lazy"
+						decoding="async"
+						referrerpolicy="no-referrer"
+					/>
+				</div>
+			{/if}
+			<div class="flex flex-col gap-2 px-4 py-3">
+				<h2 class="text-2xl font-bold">{event.title}</h2>
+				<div class="flex items-center gap-2 text-sm text-neutral-700">
+					<Clock size={18} />
+					{#if event.startTime}
+						<p>{new Date(event.startTime).toLocaleString()}</p>
+					{:else}
+						<p>TBD</p>
+					{/if}
+				</div>
+				<div class="flex items-center gap-2 text-sm text-neutral-700">
+					<MapPin size={18} />
+					<p>{event.location}</p>
+				</div>
 			</div>
 		</div>
 	</a>

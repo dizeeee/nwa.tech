@@ -47,6 +47,18 @@
 	</div>
 </div>
 
+{#if data.event.imageUrl}
+	<div class="my-4 aspect-[16/9] overflow-hidden rounded-md border border-neutral-200">
+		<img
+			src={data.event.imageUrl}
+			alt={data.event.title}
+			class="h-full w-full object-cover"
+			loading="eager"
+			decoding="async"
+		/>
+	</div>
+{/if}
+
 <div class="flex items-center gap-4">
 	<div class="flex items-center gap-2">
 		<Clock class="size-4 text-neutral-700" />

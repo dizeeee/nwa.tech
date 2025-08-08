@@ -1,8 +1,33 @@
 <script lang="ts">
 	const { data } = $props();
+
+	const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as const;
+
+	let fileError = $state('');
+
+	function onFileChange(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const file = input.files?.[0];
+		if (!file) {
+			fileError = '';
+			return;
+		}
+		if (!allowedTypes.includes(file.type as (typeof allowedTypes)[number])) {
+			fileError = 'Only JPG, PNG, WEBP, and GIF files are allowed.';
+			input.value = '';
+			return;
+		}
+
+		fileError = '';
+	}
 </script>
 
-<form action="?/createEvent" method="POST" class="flex flex-col gap-2">
+<form
+	action="?/createEvent"
+	method="POST"
+	enctype="multipart/form-data"
+	class="flex flex-col gap-2"
+>
 	<h1 class="text-2xl font-bold">Create Event</h1>
 	<label for="title">Title</label>
 	<input
@@ -58,6 +83,21 @@
 		placeholder="Location"
 		class="rounded-md border border-gray-300 p-2"
 	/>
+	<label for="image">Banner Image (16:9 recommended)</label>
+	<input
+		id="image"
+		type="file"
+		name="image"
+		accept="image/jpeg,image/png,image/webp,image/gif"
+		title="Accepted types: JPG, PNG, WEBP, GIF"
+		class="rounded-md border border-gray-300 p-2 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-blue-700 hover:file:bg-blue-100"
+		onchange={onFileChange}
+	/>
+	{#if fileError}
+		<p class="text-sm text-red-600">{fileError}</p>
+	{:else}
+		<p class="text-sm text-gray-500">Accepted types: JPG, PNG, WEBP, GIF</p>
+	{/if}
 	<button
 		type="submit"
 		class="cursor-pointer rounded-md bg-blue-500 p-2 text-white hover:bg-blue-600"

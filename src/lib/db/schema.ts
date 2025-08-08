@@ -12,7 +12,8 @@ export const event = sqliteTable('event', {
 	organizerId: text('organizer_id')
 		.notNull()
 		.references(() => authSchema.user.id),
-	organizationId: text('organization_id').references(() => authSchema.organization.id)
+	organizationId: text('organization_id').references(() => authSchema.organization.id),
+	imageUrl: text('image_url')
 });
 
 export const eventRelations = relations(event, ({ one }) => ({
